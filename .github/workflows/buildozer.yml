@@ -18,7 +18,7 @@ jobs:
         run: |
           # The container already has all SDK tools installed
           # We just need to ensure permissions are correct
-          chown -R root:root .
+          export BUILDOZER_ALLOW_ROOT=1
           python3 -m buildozer android debug
 
       - name: Upload artifacts
