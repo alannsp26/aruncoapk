@@ -19,9 +19,6 @@ jobs:
         working-directory: .  # Change this if your code is in a sub-folder
         run: |
           buildozer android debug
-        run: |
-          pip install --upgrade buildozer
-          buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
