@@ -18,9 +18,11 @@ jobs:
       - name: Build with Buildozer
         working-directory: .  # Change this if your code is in a sub-folder
         run: |
-          pip install buildozer
-          # Use python3 -m to ensure it finds the package
-          python3 -m buildozer --spec /home/runner/work/aruncoapk/aruncoapk/buildozer.spec android debug
+          # Print the current location and list files to debug
+          pwd
+          ls -F
+          # Now run buildozer
+          python3 -m buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
