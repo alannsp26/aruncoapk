@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-        - name: Build with Buildozer
+      - name: Build with Buildozer
         run: |
           # Allow running as root without prompting
           export BUILDOZER_ALLOW_ROOT=1
