@@ -20,7 +20,7 @@ jobs:
         run: |
           pip install buildozer
           # Use python3 -m to ensure it finds the package
-          python3 -m buildozer android debug
+          python3 -m buildozer --spec /home/runner/work/aruncoapk/aruncoapk/buildozer.spec android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
