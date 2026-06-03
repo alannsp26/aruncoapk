@@ -18,8 +18,8 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.0
 
 # (list) Application requirements
-# Pinned to specific versions to avoid compilation errors on Android
-requirements = python3, kivy==2.3.0, numpy==1.24.3, opencv-python-headless==4.7.0.72
+# Change your requirements line to this:
+requirements = python3, kivy==2.3.0, numpy, opencv-python-headless
 
 # (str) Presplash of the application
 # presplash.filename = %(source.dir)s/data/presplash.png
