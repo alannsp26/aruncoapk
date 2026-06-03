@@ -18,35 +18,41 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.0
 
 # (list) Application requirements
-# These are the libraries your app needs to run.
-requirements = python3, kivy==2.3.0, numpy, opencv-python-headless
+# Pinned to specific versions to avoid compilation errors on Android
+requirements = python3, kivy==2.3.0, numpy==1.24.3, opencv-python-headless==4.7.0.72
 
-# (str) Application orientation
+# (str) Presplash of the application
+# presplash.filename = %(source.dir)s/data/presplash.png
+
+# (str) Icon of the application
+# icon.filename = %(source.dir)s/data/icon.png
+
+# (list) Supported orientations
 orientation = portrait
 
-# (bool) Indicate if the application should be fullscreen or not
+# (bool) Indicate if the application should be fullscreen
 fullscreen = 1
 
 # (list) Permissions
 android.permissions = CAMERA
 
-# (int) Android API to use
+# (int) Target Android API
 android.api = 33
 
 # (int) Minimum API required
 android.minapi = 24
 
-# (int) NDK API to use
+# (int) Android NDK API to use
 android.ndk_api = 24
 
-# (str) The NDK version to use
+# (str) Android NDK version to use
 android.ndk = 25c
 
-# (list) Android architectures to build for
+# (list) Android archs to build
 android.archs = arm64-v8a
 
 [buildozer]
-# (int) Log level (0 = error only, 1 = info, 2 = debug)
+# (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
 log_level = 2
 
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
