@@ -14,7 +14,11 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libgdbm-dev libsqlite3-dev libbz2-dev libffi-dev tk-dev uuid-dev libpng-dev libjpeg-dev
-
+      - name: Install Android SDK components
+        run: |
+          # This forces the SDK manager to install the necessary build tools
+          # Replace '33' with the android.api level defined in your spec file
+          yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.1" "platforms;android-33"
       - name: Install Buildozer
         run: |
           pip install --upgrade buildozer
