@@ -1,28 +1,6 @@
-name: Build Android APK
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/kivy/buildozer:latest
-      options: --user root
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build with Buildozer
+- name: Build with Buildozer
         run: |
-          # The container already has all SDK tools installed
-          # We just need to ensure permissions are correct
+          # Allow running as root without prompting
           export BUILDOZER_ALLOW_ROOT=1
+          # Run the build
           python3 -m buildozer android debug
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: bin/*.apk
