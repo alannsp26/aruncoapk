@@ -18,6 +18,7 @@ jobs:
       - name: Build with Buildozer
         working-directory: .  # Change this if your code is in a sub-folder
         run: |
+          pip install buildozer
           # Use python3 -m to ensure it finds the package
           python3 -m buildozer android debug
 
