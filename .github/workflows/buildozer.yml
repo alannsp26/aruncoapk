@@ -7,28 +7,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/kivy/buildozer:latest
+      options: --user root
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libgdbm-dev libsqlite3-dev libbz2-dev libffi-dev tk-dev uuid-dev libpng-dev libjpeg-dev
-          
-      - name: Install Buildozer
-        run: |
-          pip install --upgrade buildozer
-          # Add the local bin folder to the system PATH
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Build with Buildozer
         run: |
-          # 1. Force buildozer to create the directory structure and download the base SDK
-          # This will likely error out, which is why we use '|| true' to ignore the exit code
-          buildozer android debug || true
-          
-          # 2. Now run the actual build
-          buildozer android debug
+          # The container already has all SDK tools installed
+          # We just need to ensure permissions are correct
+          chown -R root:root .
+          python3 -m buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
