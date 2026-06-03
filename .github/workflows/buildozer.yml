@@ -16,10 +16,8 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Allow running as root without prompting
-          export BUILDOZER_ALLOW_ROOT=1
-          # Run the build
-          python3 -m buildozer android debug
+          # Bypass the root check and automate the build process
+          yes y | BUILDOZER_ALLOW_ROOT=1 python3 -m buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
