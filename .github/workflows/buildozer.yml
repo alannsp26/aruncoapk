@@ -18,15 +18,22 @@ jobs:
 
       - name: Setup Python 3.11 and Build Environment
         run: |
-          # The container default might be 3.14. Let's create a 3.11 venv
-          apt-get update && apt-get install -y python3.11 python3.11-venv
+          # Add the deadsnakes PPA to get access to python3.11
+          apt-get update
+          apt-get install -y software-properties-common
+          add-apt-repository -y ppa:deadsnakes/ppa
+          apt-get update
+          
+          # Now install python3.11
+          apt-get install -y python3.11 python3.11-venv
+          
+          # Create and use the venv
           python3.11 -m venv /opt/venv
           export PATH="/opt/venv/bin:$PATH"
           
-          # Install dependencies into the 3.11 venv
+          # Install dependencies
           pip install --upgrade pip
           pip install "Cython==0.29.33" "buildozer"
-
       - name: Build with Buildozer
         run: |
           # Use the 3.11 environment
