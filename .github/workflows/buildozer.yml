@@ -26,10 +26,12 @@ jobs:
           # 2. Clear out any bad cache artifacts
           rm -rf .buildozer
           
-          # 3. Target Python 3.11 explicitly to install its dependencies
-          /usr/bin/python3.11 -m pip install Cython==0.29.33
+          # FIX: Force pip to allow installation of packages inside the 3.11 environment
+          # This overrides PEP 668 managed environment restrictions safely inside a container
+          /usr/bin/python3.11 -m pip config set global.break-system-packages true
           
-          # FIX: Explicitly install buildozer into the Python 3.11 context
+          # 3. Target Python 3.11 explicitly to install its core dependencies
+          /usr/bin/python3.11 -m pip install Cython==0.29.33
           /usr/bin/python3.11 -m pip install buildozer
           
           # 4. Execute the build process safely under 3.11
