@@ -16,13 +16,13 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # 1. Clear any cached artifacts from previous failed runs
+          # Clear any cached artifacts from previous failed runs
           rm -rf .buildozer
           
-          # 2. Install the necessary build tools via pip
-          pip install Cython==0.29.33 buildozer
+          # Install the specific Cython version required by Kivy 2.3.0
+          pip install --upgrade "Cython==0.29.33" "buildozer"
           
-          # 3. Execute the build process safely
+          # Execute the build process safely
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug
 
       - name: Upload artifacts
