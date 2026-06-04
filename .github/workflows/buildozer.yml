@@ -16,22 +16,21 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # 1. Install prerequisites for adding PPAs
+          # 1. Install prerequisites and Python 3.11 via deadsnakes PPA
           sudo apt-get update
           sudo apt-get install -y software-properties-common
-          
-          # 2. Add Deadsnakes PPA to access older Python versions like 3.11
           sudo add-apt-repository -y ppa:deadsnakes/ppa
           sudo apt-get update
-          
-          # 3. Install Python 3.11 and development headers
           sudo apt-get install -y python3.11 python3.11-dev python3.11-venv
           
-          # 4. Clear old cached builds to prevent artifact contamination
+          # 2. Clear out any bad cache artifacts
           rm -rf .buildozer
           
-          # 5. Pin Cython to the version required by Kivy 2.3.0 using the 3.11 context
+          # 3. Target Python 3.11 explicitly to install its dependencies
           /usr/bin/python3.11 -m pip install Cython==0.29.33
           
-          # 6. Run buildozer explicitly through the python3.11 binary
+          # FIX: Explicitly install buildozer into the Python 3.11 context
+          /usr/bin/python3.11 -m pip install buildozer
+          
+          # 4. Execute the build process safely under 3.11
           yes y | BUILDOZER_ALLOW_ROOT=1 /usr/bin/python3.11 -m buildozer android debug
