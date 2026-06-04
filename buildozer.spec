@@ -6,11 +6,12 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# 1. Target dependencies (let Buildozer cross-compile them)
-requirements = python3,kivy==2.3.0,numpy,opencv
+# Ensure requirements are compatible with Python 3.11
+# Note: opencv in p4a often requires specific handling; 
+# ensure you aren't pulling incompatible versions.
+requirements = python3,kivy==2.3.0,numpy,opencv-python
 
-# 2. THE CRITICAL FIX: Lock to a known stable release branch
-# This prevents the experimental Python 3.14 C-API header crash
+# The stable branch is correct; keep it.
 p4a.branch = release-2024.01.21
 
 presplash.filename = %(source.dir)s/data/presplash.png
@@ -22,7 +23,14 @@ fullscreen = 0
 log_level = 2
 warn_on_root = 1
 
-# 3. Pin the NDK to 25b, which perfectly matches the stable p4a branch
+# Android settings aligned with NDK r25b
 android.ndk = 25b
-android.api = 33
+android.sdk = 33
 android.minapi = 24
+android.ndk_path = /opt/android-ndk-r25b
+# Ensure the SDK path is defined if not automatically found by buildozer
+# android.sdk_path = /opt/android-sdk
+
+# Optimization: Ensure buildozer uses the environment's python
+# This helps the build process respect the 3.11 virtualenv we created
+p4a.local_recipes =
