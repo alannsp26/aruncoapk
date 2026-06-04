@@ -17,7 +17,8 @@ source.include_exts = py,png,jpg,kv,atlas
 # (str) Application versioning
 version = 1.0
 
-requirements = python3,kivy==2.3.0,numpy,opencv-python-headless
+# Remove numpy and opencv-python-headless from here
+requirements = python3,kivy==2.3.0
 
 # (str) Presplash of the application
 # presplash.filename = %(source.dir)s/data/presplash.png
