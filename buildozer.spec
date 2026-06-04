@@ -8,6 +8,7 @@ version = 0.1
 
 # We list only pure-Python or compatible platform requirements here.
 # Numpy and OpenCV will be handled by the CI/pip step.
+python = 3.11
 requirements = python3,kivy==2.3.0
 
 presplash.filename = %(source.dir)s/data/presplash.png
