@@ -17,8 +17,7 @@ source.include_exts = py,png,jpg,kv,atlas
 # (str) Application versioning
 version = 1.0
 
-# Pin versions here. Pip will handle these without triggering git checkout errors.
-requirements = python3, kivy==2.3.0, numpy==1.24.3, opencv-python-headless==4.7.0.72
+requirements = python3,kivy==2.3.0,numpy,opencv-python-headless
 
 # (str) Presplash of the application
 # presplash.filename = %(source.dir)s/data/presplash.png
