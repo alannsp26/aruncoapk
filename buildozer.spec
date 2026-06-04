@@ -8,8 +8,7 @@ version = 0.1
 
 # Forcing the compilation framework to target Python 3.11 compatibility
 python = 3.11
-requirements = python3,kivy==2.3.0,numpy==1.24.3,opencv-python-headless==4.7.0.72
-
+requirements = python3,kivy==2.3.0,numpy,opencv-python-headless
 presplash.filename = %(source.dir)s/data/presplash.png
 icon.filename = %(source.dir)s/data/icon.png
 orientation = portrait
