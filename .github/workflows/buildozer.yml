@@ -16,11 +16,10 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # 1. Clean the environment to remove failed build artifacts
-          rm -rf .buildozer/android/platform/build-arm64-v8a
+          # 1. Full clean of all build artifacts
+          rm -rf .buildozer
           
-          # 2. Tell Buildozer to use the 'pip' toolchain for requirements, 
-          # which ignores git and installs via the Python Package Index.
+          # 2. Build with the requirement file
           yes y | BUILDOZER_ALLOW_ROOT=1 python3 -m buildozer android debug
 
       - name: Upload artifacts
