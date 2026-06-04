@@ -6,10 +6,10 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# We list only pure-Python or compatible platform requirements here.
-# Numpy and OpenCV will be handled by the CI/pip step.
+# Keep these unpinned here to bypass the git checkout pathspec bug.
+# Python-for-android will handle compiling them as standard dependencies.
 python = 3.11
-requirements = python3,kivy==2.3.0
+requirements = python3,kivy==2.3.0,numpy,opencv-python-headless
 
 presplash.filename = %(source.dir)s/data/presplash.png
 icon.filename = %(source.dir)s/data/icon.png
