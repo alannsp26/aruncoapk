@@ -18,9 +18,6 @@ fullscreen = 0
 [buildozer]
 log_level = 2
 warn_on_root = 1
-
-[buildozer]
-# Pin NDK to a stable version known to work with OpenCV/Numpy
 android.ndk = 25c
 android.api = 33
 android.minapi = 24
