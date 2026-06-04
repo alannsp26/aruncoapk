@@ -1,32 +1,21 @@
-name: Build Android APK
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/kivy/buildozer:latest
-      options: --user root
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install buildozer cython
+          # If you have a requirements.txt, install it here
+          # pip install -r requirements.txt
 
       - name: Build with Buildozer
         run: |
-          # Clear any cached artifacts from previous failed runs
-          rm -rf .buildozer
-          
-          # Install the specific Cython version required by Kivy 2.3.0
-          pip install --upgrade "Cython==0.29.33" "buildozer"
-          
-          # Execute the build process safely
-          yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: bin/*.apk
+          buildozer android debug
