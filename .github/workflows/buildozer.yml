@@ -16,11 +16,10 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # 1. Full clean of all build artifacts
           rm -rf .buildozer
-          
-          # 2. Build with the requirement file
-          yes y | BUILDOZER_ALLOW_ROOT=1 python3 -m buildozer android debug
+          yes y | BUILDOZER_ALLOW_ROOT=1 \
+          PYTHONPATH=$PYTHONPATH:. \
+          python3 -m buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
