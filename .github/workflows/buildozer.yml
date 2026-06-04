@@ -16,7 +16,7 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # 1. Install prerequisites and Python 3.11 via deadsnakes PPA
+          # 1. Install Python 3.11 via deadsnakes PPA
           sudo apt-get update
           sudo apt-get install -y software-properties-common
           sudo add-apt-repository -y ppa:deadsnakes/ppa
@@ -26,13 +26,14 @@ jobs:
           # 2. Clear out any bad cache artifacts
           rm -rf .buildozer
           
-          # FIX: Force pip to allow installation of packages inside the 3.11 environment
-          # This overrides PEP 668 managed environment restrictions safely inside a container
-          /usr/bin/python3.11 -m pip config set global.break-system-packages true
+          # 3. Create and activate a Virtual Environment using Python 3.11
+          # This completely isolates our build from the Debian system packages!
+          python3.11 -m venv my_build_env
+          source my_build_env/bin/activate
           
-          # 3. Target Python 3.11 explicitly to install its core dependencies
-          /usr/bin/python3.11 -m pip install Cython==0.29.33
-          /usr/bin/python3.11 -m pip install buildozer
+          # 4. Install dependencies INSIDE the virtual environment
+          pip install Cython==0.29.33
+          pip install buildozer
           
-          # 4. Execute the build process safely under 3.11
-          yes y | BUILDOZER_ALLOW_ROOT=1 /usr/bin/python3.11 -m buildozer android debug
+          # 5. Execute the build process safely isolated
+          yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug
