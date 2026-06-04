@@ -16,16 +16,15 @@ jobs:
 
       - name: Build with Buildozer
         run: |
+          # 1. Install Python 3.11 development headers
           sudo apt-get update
           sudo apt-get install -y python3.11 python3.11-dev python3.11-venv
+          
+          # 2. Clear old cached builds
           rm -rf .buildozer
-          pip install Cython==0.29.33
-          yes y | BUILDOZER_ALLOW_ROOT=1 \
-          PYTHONPATH=$PYTHONPATH:. \
-          python3 -m buildozer android debug
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: bin/*.apk
+          
+          # 3. Pin Cython to the version required by Kivy 2.3.0
+          /usr/bin/python3.11 -m pip install Cython==0.29.33
+          
+          # 4. Run buildozer explicitly through the python3.11 binary
+          yes y | BUILDOZER_ALLOW_ROOT=1 /usr/bin/python3.11 -m buildozer android debug
