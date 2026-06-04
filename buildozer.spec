@@ -6,10 +6,9 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# Keep these unpinned here to bypass the git checkout pathspec bug.
-# Python-for-android will handle compiling them as standard dependencies.
+# Forcing the compilation framework to target Python 3.11 compatibility
 python = 3.11
-requirements = python3,kivy==2.3.0,numpy,opencv-python-headless
+requirements = python3,kivy==2.3.0,numpy==1.24.3,opencv-python-headless==4.7.0.72
 
 presplash.filename = %(source.dir)s/data/presplash.png
 icon.filename = %(source.dir)s/data/icon.png
