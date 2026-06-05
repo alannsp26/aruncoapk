@@ -6,8 +6,8 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# 1. FIXED: Must be 'opencv' (the p4a recipe name), not 'opencv-python'
-requirements = python3,kivy==2.3.0,numpy,opencv
+# Reverted back to your original setup
+requirements = python3,kivy==2.3.0,numpy,opencv-python
 
 p4a.branch = release-2024.01.21
 
