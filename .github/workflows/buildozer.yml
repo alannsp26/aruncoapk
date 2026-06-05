@@ -1,55 +1,56 @@
 name: Build Android APK
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      # Use a stable, older tag or ensure the container environment is handled
-      # If 'latest' is 3.14, we need to explicitly create a 3.11 venv
-      image: ghcr.io/kivy/buildozer:latest
-      options: --user root
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Python 3.11 and Build Environment
         run: |
           # Add the deadsnakes PPA to get access to python3.11
-          apt-get update
-          apt-get install -y software-properties-common
-          add-apt-repository -y ppa:deadsnakes/ppa
-          apt-get update
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:deadsnakes/ppa
+          sudo apt-get update
           
-          # Now install python3.11
-          apt-get install -y python3.11 python3.11-venv
+          # Install python3.11 and dependencies
+          sudo apt-get install -y python3.11 python3.11-venv python3.11-dev
           
-          # Create and use the venv
-          python3.11 -m venv /opt/venv
+          # Create and use the venv inside /opt/venv
+          sudo python3.11 -m venv /opt/venv
+          sudo chown -R $USER:$USER /opt/venv
           export PATH="/opt/venv/bin:$PATH"
           
-          # Install dependencies
+          # Install Kivy/Buildozer dependencies
           pip install --upgrade pip
           pip install "Cython==0.29.33" "buildozer"
+
       - name: Build with Buildozer
         run: |
+          # Ensure we are using the 3.11 virtual environment
           export PATH="/opt/venv/bin:$PATH"
+          
+          # The ultimate memory fix that saved the Gradle build
           export _JAVA_OPTIONS="-Xmx3g -XX:+UseG1GC"
           export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+          
+          # Clean up any leftover junk just in case
           rm -rf .buildozer
-          yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug || true
-          echo "org.gradle.jvmargs=-Xmx3g -XX:+UseG1GC" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.parallel=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.daemon=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.configureondemand=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties    
-          echo "org.gradle.offline=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
+          
+          # The single, triumphant build command
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug
 
-      - name: Upload artifacts
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: my-aruco-detector-apk
           path: bin/*.apk
