@@ -16,39 +16,37 @@ jobs:
 
       - name: Setup Python 3.11 and Build Environment
         run: |
-          # Add the deadsnakes PPA to get access to python3.11
           sudo apt-get update
           sudo apt-get install -y software-properties-common
           sudo add-apt-repository -y ppa:deadsnakes/ppa
           sudo apt-get update
           
-          # THE FIX: Added the complete suite of Ubuntu 24.04 Buildozer dependencies
+          # Added autogen and specific toolchain requirements
           sudo apt-get install -y python3.11 python3.11-venv python3.11-dev \
             build-essential libtool libtool-bin autoconf automake pkg-config \
             libffi-dev libssl-dev zip unzip
           
-          # --system-site-packages allows p4a's --user installs
           sudo python3.11 -m venv --system-site-packages /opt/venv
           sudo chown -R $USER:$USER /opt/venv
           export PATH="/opt/venv/bin:$PATH"
           
-          # Install Kivy/Buildozer dependencies
           pip install --upgrade pip
           pip install "Cython==0.29.33" "buildozer"
 
       - name: Build with Buildozer
         run: |
           export PATH="/opt/venv/bin:$PATH"
-          
-          # The ultimate memory fix that saved the Gradle build
           export _JAVA_OPTIONS="-Xmx3g -XX:+UseG1GC"
           export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
           
-          # Clean up any leftover junk
+          # CRITICAL: Force remove the cache and the specific problematic libffi build folder
           rm -rf .buildozer
           
-          # Initial run to generate the directory structure
+          # Initialize build environment
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug || true
+          
+          # Clear out the failed libffi configuration so it can regenerate correctly
+          find .buildozer -name "libffi" -type d -exec rm -rf {} + || true
           
           # Manual Gradle performance injections
           for dir in .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*; do
