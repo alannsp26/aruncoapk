@@ -25,8 +25,8 @@ jobs:
           # Install python3.11 and dependencies
           sudo apt-get install -y python3.11 python3.11-venv python3.11-dev
           
-          # Create and use the venv inside /opt/venv
-          sudo python3.11 -m venv /opt/venv
+          # FIXED: Added --system-site-packages to allow p4a's --user installs
+          sudo python3.11 -m venv --system-site-packages /opt/venv
           sudo chown -R $USER:$USER /opt/venv
           export PATH="/opt/venv/bin:$PATH"
           
@@ -36,21 +36,33 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Ensure we are using the 3.11 virtual environment
           export PATH="/opt/venv/bin:$PATH"
           
           # The ultimate memory fix that saved the Gradle build
           export _JAVA_OPTIONS="-Xmx3g -XX:+UseG1GC"
           export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
           
-          # Clean up any leftover junk just in case
+          # Clean up any leftover junk
           rm -rf .buildozer
           
-          # The single, triumphant build command
+          # Initial run to generate the directory structure
+          yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug || true
+          
+          # Manual Gradle performance injections
+          echo "org.gradle.jvmargs=-Xmx3g -XX:+UseG1GC" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
+          echo "org.gradle.parallel=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
+          echo "org.gradle.daemon=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
+          echo "org.gradle.configureondemand=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties    
+          
+          # Set the build to be offline so it doesn't try to redownload Gradle
+          echo "org.gradle.offline=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
+          
+          # The final build command
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-aruco-detector-apk
+          # Changed to match your new app name
+          name: aruco-scanner-apk
           path: bin/*.apk
