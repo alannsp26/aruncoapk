@@ -22,8 +22,10 @@ jobs:
           sudo add-apt-repository -y ppa:deadsnakes/ppa
           sudo apt-get update
           
-          # FIXED: Added libtool, autoconf, automake, and pkg-config to solve the LT_SYS_SYMBOL_USCORE error
-          sudo apt-get install -y python3.11 python3.11-venv python3.11-dev libtool autoconf automake pkg-config
+          # THE FIX: Added the complete suite of Ubuntu 24.04 Buildozer dependencies
+          sudo apt-get install -y python3.11 python3.11-venv python3.11-dev \
+            build-essential libtool libtool-bin autoconf automake pkg-config \
+            libffi-dev libssl-dev zip unzip
           
           # --system-site-packages allows p4a's --user installs
           sudo python3.11 -m venv --system-site-packages /opt/venv
@@ -48,7 +50,7 @@ jobs:
           # Initial run to generate the directory structure
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug || true
           
-          # Manual Gradle performance injections (Wrapped in a safe check so bash doesn't crash)
+          # Manual Gradle performance injections
           for dir in .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*; do
             if [ -d "$dir" ]; then
               echo "org.gradle.jvmargs=-Xmx3g -XX:+UseG1GC" >> "$dir/gradle.properties"
@@ -65,6 +67,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          # Changed to match your new app name
           name: aruco-scanner-apk
           path: bin/*.apk
