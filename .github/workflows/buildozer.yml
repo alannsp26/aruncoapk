@@ -41,11 +41,11 @@ jobs:
           export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
           rm -rf .buildozer
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug || true
-          echo "org.gradle.jvmargs=-Xmx3g -XX:+UseG1GC" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.parallel=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.daemon=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.configureondemand=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties    
-          echo "org.gradle.offline=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
+          echo "org.gradle.jvmargs=-Xmx3g -XX:+UseG1GC" >> .buildozer/android/platform/build-*/dists/*/gradle.properties
+          echo "org.gradle.parallel=false" >> .buildozer/android/platform/build-*/dists/*/gradle.properties
+          echo "org.gradle.daemon=false" >> .buildozer/android/platform/build-*/dists/*/gradle.properties
+          echo "org.gradle.configureondemand=true" >> .buildozer/android/platform/build-*/dists/*/gradle.properties    
+          echo "org.gradle.offline=true" >> .buildozer/android/platform/build-*/dists/*/gradle.properties
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug
 
       - name: Upload artifacts
