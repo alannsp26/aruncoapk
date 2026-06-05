@@ -25,6 +25,7 @@ android.sdk = 33
 android.minapi = 24
 android.ndk_path = /opt/android-ndk-r25b
 # android.sdk_path = /opt/android-sdk
+android.permissions = CAMERA, INTERNET
 
 p4a.local_recipes = 
 
