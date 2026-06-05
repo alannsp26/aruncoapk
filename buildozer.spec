@@ -1,17 +1,14 @@
 [app]
-title = My ArUco Detector
+title = ArUco Detector
 package.name = arucodetector
 package.domain = org.test
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# Ensure requirements are compatible with Python 3.11
-# Note: opencv in p4a often requires specific handling; 
-# ensure you aren't pulling incompatible versions.
-requirements = python3,kivy==2.3.0,numpy,opencv-python
+# 1. FIXED: Must be 'opencv' (the p4a recipe name), not 'opencv-python'
+requirements = python3,kivy==2.3.0,numpy,opencv
 
-# The stable branch is correct; keep it.
 p4a.branch = release-2024.01.21
 
 presplash.filename = %(source.dir)s/data/presplash.png
@@ -23,14 +20,13 @@ fullscreen = 0
 log_level = 2
 warn_on_root = 1
 
-# Android settings aligned with NDK r25b
 android.ndk = 25b
 android.sdk = 33
 android.minapi = 24
 android.ndk_path = /opt/android-ndk-r25b
-# Ensure the SDK path is defined if not automatically found by buildozer
 # android.sdk_path = /opt/android-sdk
 
-# Optimization: Ensure buildozer uses the environment's python
-# This helps the build process respect the 3.11 virtualenv we created
-p4a.local_recipes =
+p4a.local_recipes = 
+
+# 2. FIXED: Directly solves the "java.lang.OutOfMemoryError" in Gradle
+android.add_gradle_properties = org.gradle.jvmargs=-Xmx4g -XX:+UseG1GC
