@@ -1,12 +1,12 @@
 [app]
-title = ArUco Detector
-package.name = arucodetector
+title = ArUco Scanner
+package.name = arucoscanner
 package.domain = org.test
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-# Reverted back to your original setup
+# 1. FIXED: Must be 'opencv' (the p4a recipe name), not 'opencv-python'
 requirements = python3,kivy==2.3.0,numpy,opencv-python
 
 p4a.branch = release-2024.01.21
@@ -23,8 +23,8 @@ warn_on_root = 1
 android.ndk = 25b
 android.sdk = 33
 android.minapi = 24
-android.ndk_path = 
-android.sdk_path = 
+android.ndk_path = /opt/android-ndk-r25b
+# android.sdk_path = /opt/android-sdk
 
 p4a.local_recipes = 
 
