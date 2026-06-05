@@ -22,10 +22,10 @@ jobs:
           sudo add-apt-repository -y ppa:deadsnakes/ppa
           sudo apt-get update
           
-          # Install python3.11 and dependencies
-          sudo apt-get install -y python3.11 python3.11-venv python3.11-dev
+          # FIXED: Added libtool, autoconf, automake, and pkg-config to solve the LT_SYS_SYMBOL_USCORE error
+          sudo apt-get install -y python3.11 python3.11-venv python3.11-dev libtool autoconf automake pkg-config
           
-          # FIXED: Added --system-site-packages to allow p4a's --user installs
+          # --system-site-packages allows p4a's --user installs
           sudo python3.11 -m venv --system-site-packages /opt/venv
           sudo chown -R $USER:$USER /opt/venv
           export PATH="/opt/venv/bin:$PATH"
@@ -48,14 +48,16 @@ jobs:
           # Initial run to generate the directory structure
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug || true
           
-          # Manual Gradle performance injections
-          echo "org.gradle.jvmargs=-Xmx3g -XX:+UseG1GC" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.parallel=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.daemon=false" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
-          echo "org.gradle.configureondemand=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties    
-          
-          # Set the build to be offline so it doesn't try to redownload Gradle
-          echo "org.gradle.offline=true" >> .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*/gradle.properties
+          # Manual Gradle performance injections (Wrapped in a safe check so bash doesn't crash)
+          for dir in .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/*; do
+            if [ -d "$dir" ]; then
+              echo "org.gradle.jvmargs=-Xmx3g -XX:+UseG1GC" >> "$dir/gradle.properties"
+              echo "org.gradle.parallel=false" >> "$dir/gradle.properties"
+              echo "org.gradle.daemon=false" >> "$dir/gradle.properties"
+              echo "org.gradle.configureondemand=true" >> "$dir/gradle.properties"    
+              echo "org.gradle.offline=true" >> "$dir/gradle.properties"
+            fi
+          done
           
           # The final build command
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug
