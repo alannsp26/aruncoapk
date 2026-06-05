@@ -26,6 +26,17 @@ android.minapi = 24
 android.ndk_path = /opt/android-ndk-r25b
 # android.sdk_path = /opt/android-sdk
 android.permissions = CAMERA, INTERNET
+# Only build for your target architecture (pick one)
+android.archs = arm64-v8a  # modern phones only (smaller APK)
+# or
+# android.archs = armeabi-v7a  # older phones
+
+# Enable release build (smaller than debug)
+android.release = True
+
+# Strip debug symbols
+android.strip_libraries = True
+
 
 p4a.local_recipes = 
 
