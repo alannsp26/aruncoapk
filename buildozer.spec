@@ -15,7 +15,7 @@ requirements = python3,kivy==2.3.0,numpy,opencv-python
 p4a.branch = release-2024.01.21
 
 presplash.filename = %(source.dir)s/data/presplash.png
-icon.filename = %(source.dir)s/data/icon.png
+icon.filename = %(source.dir)s/data/icon.ico
 orientation = portrait
 fullscreen = 0
 
