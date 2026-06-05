@@ -23,8 +23,8 @@ warn_on_root = 1
 android.ndk = 25b
 android.sdk = 33
 android.minapi = 24
-android.ndk_path = /opt/android-ndk-r25b
-# android.sdk_path = /opt/android-sdk
+android.ndk_path = 
+android.sdk_path = 
 
 p4a.local_recipes = 
 
