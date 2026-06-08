@@ -101,13 +101,12 @@ class ArUcoLayout(FloatLayout):
         
         # Initialize camera attribute
         self.cap = None
+        self._cam_texture = None  # Persistent texture reference to avoid memory leaks
         
-        # Check if we're on Android and need permissions
+        # Handle platform initialization safely
         if platform == 'android':
-            # Schedule camera init after permissions check
             Clock.schedule_once(lambda dt: self.check_permissions_and_init(), 0.1)
         else:
-            # Direct init for non-Android platforms
             self.init_camera()
         
         self.settings = SettingsPopup()
@@ -133,26 +132,29 @@ class ArUcoLayout(FloatLayout):
 
         self.auto_cycle_on = False
         self.last_cycle = time.time()
-
-        # Only schedule update if camera was initialized
-        if self.cap is not None:
-            Clock.schedule_interval(self.update, 1.0 / 30.0)
     
     def check_permissions_and_init(self):
-        """Request camera permission on Android before initializing camera"""
+        """Asynchronously requests camera permission using a real callback thread"""
         try:
             from android.permissions import request_permissions, Permission, check_permission
             
             if not check_permission(Permission.CAMERA):
-                request_permissions([Permission.CAMERA])
-                # Wait a bit for permission dialog
-                Clock.schedule_once(lambda dt: self.init_camera(), 0.5)
+                # Pass a proper callback instead of relying on an arbitrary timer delay
+                request_permissions([Permission.CAMERA], self.on_permission_result)
             else:
                 self.init_camera()
         except Exception as e:
-            print(f"Permission error: {e}")
-            # Fallback - try to init camera anyway
+            print(f"Permission setup error: {e}")
             self.init_camera()
+
+    def on_permission_result(self, permissions, grants):
+        """Callback triggered automatically when user acts on permission prompt"""
+        if grants and all(grants):
+            print("Camera permission granted dynamically")
+            self.init_camera()
+        else:
+            print("Permission denied by user")
+            self.show_camera_error()
     
     def init_camera(self):
         """Initialize camera with appropriate backend for platform"""
@@ -160,10 +162,11 @@ class ArUcoLayout(FloatLayout):
             if platform == 'win':
                 self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
             elif platform == 'android':
-                # Try Android native backend first
-                self.cap = cv2.VideoCapture(0, cv2.CAP_ANDROID)
+                # Dynamically look up CAP_ANDROID to bypass potential missing attribute crashes
+                android_backend = getattr(cv2, 'CAP_ANDROID', cv2.CAP_ANY)
+                self.cap = cv2.VideoCapture(0, android_backend)
                 if not self.cap.isOpened():
-                    print("CAP_ANDROID failed, trying default backend")
+                    print("CAP_ANDROID failed or missing, trying default backend")
                     self.cap = cv2.VideoCapture(0)
             else:
                 self.cap = cv2.VideoCapture(0)
@@ -174,7 +177,6 @@ class ArUcoLayout(FloatLayout):
                 Clock.schedule_interval(self.update, 1.0 / 30.0)
             else:
                 print("Failed to open camera")
-                # Show error popup
                 self.show_camera_error()
         except Exception as e:
             print(f"Camera initialization error: {e}")
@@ -204,8 +206,7 @@ class ArUcoLayout(FloatLayout):
             
         try:
             ret, frame = self.cap.read()
-            if not ret:
-                print("Failed to grab frame")
+            if not ret or frame is None or frame.size == 0:
                 return
         except Exception as e:
             print(f"Frame grab error: {e}")
@@ -300,24 +301,17 @@ class ArUcoLayout(FloatLayout):
         self.ids.detected_list.text = "\n".join(map(str, sorted(self.stable_ids.keys())))
         self.ids.blacklist_list.text = "\n".join(map(str, sorted(self.blacklist.keys())))
 
-        # Convert frame to texture (removed flip for Android compatibility - add back if needed)
-        buf = frame.tobytes()  # Removed cv2.flip for Android
-        tex = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-        tex.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-        self.ids.cam_view.texture = tex
+        # --- OPTIMIZED TEXTURE HANDLING ---
+        # Instead of allocating a new Texture 30x/sec, we generate it once and blit directly into it
+        buf = frame.tobytes()
+        if self._cam_texture is None or self._cam_texture.size != (frame.shape[1], frame.shape[0]):
+            self._cam_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+        
+        self._cam_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        self.ids.cam_view.texture = self._cam_texture
 
 
 class DetectorApp(App):
-    def on_start(self):
-        """Request permissions when app starts (Android only)"""
-        if platform == 'android':
-            try:
-                from android.permissions import request_permissions, Permission
-                request_permissions([Permission.CAMERA])
-                print("Camera permission requested")
-            except Exception as e:
-                print(f"Permission request error: {e}")
-    
     def build(self):
         Builder.load_string(KV)
         return ArUcoLayout()
