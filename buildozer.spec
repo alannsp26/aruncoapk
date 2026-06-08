@@ -23,8 +23,6 @@ warn_on_root = 1
 android.ndk = 23b
 android.sdk = 31
 android.minapi = 21
-android.ndk_path = /opt/android-ndk-r25b
-# android.sdk_path = /opt/android-sdk
 android.permissions = CAMERA, INTERNET
 # Only build for your target architecture (pick one)
 android.archs = arm64-v8a  # modern phones only (smaller APK)
