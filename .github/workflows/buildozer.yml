@@ -13,9 +13,10 @@ jobs:
       image: ghcr.io/kivy/buildozer:latest
       options: --user root
     steps:
+#______________________________________________________________________________________________________________    
       - name: Checkout code
         uses: actions/checkout@v4
-
+#______________________________________________________________________________________________________________  
       - name: Setup Python 3.11 and Build Environment
         run: |
           # Add the deadsnakes PPA to get access to python3.11
@@ -34,6 +35,20 @@ jobs:
           # Install dependencies
           pip install --upgrade pip
           pip install "Cython==0.29.33" "buildozer"
+#______________________________________________________________________________________________________________          
+      - name: Force NDK version
+        run: |
+          echo "ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/23.2.8568313" >> $GITHUB_ENV
+          echo "NDK_VERSION=23.2.8568313" >> $GITHUB_ENV
+#______________________________________________________________________________________________________________            
+      - name: Cache Buildozer
+        uses: actions/cache@v3
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-buildozer-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-buildozer-
+#______________________________________________________________________________________________________________        
       - name: Build with Buildozer
         run: |
           export PATH="/opt/venv/bin:$PATH"
@@ -41,7 +56,7 @@ jobs:
           export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
           rm -rf .buildozer
           yes y | BUILDOZER_ALLOW_ROOT=1 buildozer android debug || true
-
+#______________________________________________________________________________________________________________  
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
