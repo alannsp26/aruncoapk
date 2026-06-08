@@ -50,6 +50,9 @@ jobs:
             ${{ runner.os }}-buildozer-
 #______________________________________________________________________________________________________________        
       - name: Build with Buildozer
+        env:
+          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/23.2.8568313
+          ANDROIDNDK: /usr/local/lib/android/sdk/ndk/23.2.8568313
         run: |
           export PATH="/opt/venv/bin:$PATH"
           export _JAVA_OPTIONS="-Xmx3g -XX:+UseG1GC"
